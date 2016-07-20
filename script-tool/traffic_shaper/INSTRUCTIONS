@@ -1,0 +1,6 @@
+wshaper0 is used to limit the bandwidth of interface wlan0, open the file and set the DLink and ULink you want. So does wshaper1.
+
+How to use it?
+./wshaper0 stop // clear the rules you have set
+./wshaper0 status // check the status 
+
