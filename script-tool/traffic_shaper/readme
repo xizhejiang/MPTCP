@@ -1,2 +1,0 @@
-wshaper0 is used to limit the bandwidth of interface wlan0, open the file and set the DLink and ULink you want. So does wshaper1.
-
