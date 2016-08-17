@@ -5,7 +5,7 @@ host1="178.62.42.127:80"
 host2="139.59.189.180:80"
 flag="ESTABLISHED"
 #flag="SYN_SENT"
-counter=0
+counter=1
 trigger=0
 limit=50
 test_name="test.pcap"
@@ -33,6 +33,7 @@ do
     if [ $command -eq 0 ] && [ $trigger -eq 1 ]; then
         echo "close"
         #kill previous tcpdump process
+        sleep 1
         killall tcpdump
         #start a new tcpdump
         tcpdump -i any -s 0 -w $output_file & 
@@ -40,8 +41,8 @@ do
         trigger=0
     fi
 
-    #set the interval to be 1s
-    sleep 1
+    #set the interval to be 0.1s
+    sleep 0.1
 done
 
 
