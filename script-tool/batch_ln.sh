@@ -8,7 +8,7 @@ echo $current_folder
 
 for ((i=$protocal;i<$total;i=i+2)) 
 do
-    if[! -d $i];then
+    if[! -d "$i"];then
         mkdir $i
     fi
     ln_target=$current_folder"/"$i
