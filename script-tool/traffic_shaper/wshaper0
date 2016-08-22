@@ -9,6 +9,8 @@ DOWNLINK=8000
 UPLINK=220
 DEV=wlan0
 
+LOSS=200ms
+
 # low priority OUTGOING traffic - you can leave this blank if you want
 # low priority source netmasks
 NOPRIOHOSTSRC=80
@@ -28,9 +30,9 @@ NOPRIOPORTDST=
 
 if [ "$1" = "status" ]
 then
-	tc -s qdisc ls dev $DEV
-	tc -s class ls dev $DEV
-	exit
+    tc -s qdisc ls dev $DEV
+    tc -s class ls dev $DEV
+    exit
 fi
 
 
@@ -43,7 +45,7 @@ then
     # clean existing down- and uplink qdiscs, hide errors
     tc qdisc del dev $DEV root    2> /dev/null > /dev/null
     tc qdisc del dev $DEV ingress 2> /dev/null > /dev/null
-	exit
+    exit
 fi
 
 ###### uplink
@@ -57,23 +59,23 @@ tc qdisc add dev $DEV root handle 1: cbq avpkt 1000 bandwidth 10mbit
 # main class
 
 tc class add dev $DEV parent 1: classid 1:1 cbq rate ${UPLINK}kbit \
-allot 1500 prio 5 bounded isolated 
+    allot 1500 prio 5 bounded isolated 
 
 # high prio class 1:10:
 
 tc class add dev $DEV parent 1:1 classid 1:10 cbq rate ${UPLINK}kbit \
-   allot 1600 prio 1 avpkt 1000
+    allot 1600 prio 1 avpkt 1000
 
 # bulk and default class 1:20 - gets slightly less traffic, 
 #  and a lower priority:
 
 tc class add dev $DEV parent 1:1 classid 1:20 cbq rate $[9*$UPLINK/10]kbit \
-   allot 1600 prio 2 avpkt 1000
+    allot 1600 prio 2 avpkt 1000
 
 # 'traffic we hate'
 
 tc class add dev $DEV parent 1:1 classid 1:30 cbq rate $[8*$UPLINK/10]kbit \
-   allot 1600 prio 2 avpkt 1000
+    allot 1600 prio 2 avpkt 1000
 
 # all get Stochastic Fairness:
 tc qdisc add dev $DEV parent 1:10 handle 10: sfq perturb 10
@@ -83,51 +85,51 @@ tc qdisc add dev $DEV parent 1:30 handle 30: sfq perturb 10
 # start filters
 # TOS Minimum Delay (ssh, NOT scp) in 1:10:
 tc filter add dev $DEV parent 1:0 protocol ip prio 10 u32 \
-      match ip tos 0x10 0xff  flowid 1:10
+    match ip tos 0x10 0xff  flowid 1:10
 
 # ICMP (ip protocol 1) in the interactive class 1:10 so we 
 # can do measurements & impress our friends:
 tc filter add dev $DEV parent 1:0 protocol ip prio 11 u32 \
-        match ip protocol 1 0xff flowid 1:10
+    match ip protocol 1 0xff flowid 1:10
 
 # prioritize small packets (<64 bytes)
 
 tc filter add dev $DEV parent 1: protocol ip prio 12 u32 \
-   match ip protocol 6 0xff \
-   match u8 0x05 0x0f at 0 \
-   match u16 0x0000 0xffc0 at 2 \
-   flowid 1:10
+    match ip protocol 6 0xff \
+    match u8 0x05 0x0f at 0 \
+    match u16 0x0000 0xffc0 at 2 \
+    flowid 1:10
 
 
 # some traffic however suffers a worse fate
 for a in $NOPRIOPORTDST
 do
-	tc filter add dev $DEV parent 1: protocol ip prio 14 u32 \
-	   match ip dport $a 0xffff flowid 1:30
+    tc filter add dev $DEV parent 1: protocol ip prio 14 u32 \
+        match ip dport $a 0xffff flowid 1:30
 done
 
 for a in $NOPRIOPORTSRC
 do
- 	tc filter add dev $DEV parent 1: protocol ip prio 15 u32 \
-	   match ip sport $a 0xffff flowid 1:30
+    tc filter add dev $DEV parent 1: protocol ip prio 15 u32 \
+        match ip sport $a 0xffff flowid 1:30
 done
 
 for a in $NOPRIOHOSTSRC
 do
- 	tc filter add dev $DEV parent 1: protocol ip prio 16 u32 \
-	   match ip src $a flowid 1:30
+    tc filter add dev $DEV parent 1: protocol ip prio 16 u32 \
+        match ip src $a flowid 1:30
 done
 
 for a in $NOPRIOHOSTDST
 do
- 	tc filter add dev $DEV parent 1: protocol ip prio 17 u32 \
-	   match ip dst $a flowid 1:30
+    tc filter add dev $DEV parent 1: protocol ip prio 17 u32 \
+        match ip dst $a flowid 1:30
 done
 
 # rest is 'non-interactive' ie 'bulk' and ends up in 1:20
 
 tc filter add dev $DEV parent 1: protocol ip prio 18 u32 \
-   match ip dst 0.0.0.0/0 flowid 1:20
+    match ip dst 0.0.0.0/0 flowid 1:20
 
 
 ########## downlink #############
@@ -143,5 +145,5 @@ tc qdisc add dev $DEV handle ffff: ingress
 # coming in too fast:
 
 tc filter add dev $DEV parent ffff: protocol ip prio 50 u32 match ip src \
-   0.0.0.0/0 police rate ${DOWNLINK}kbit burst 10k drop flowid :1
+    0.0.0.0/0 police rate ${DOWNLINK}kbit burst 10k drop flowid :1
 
