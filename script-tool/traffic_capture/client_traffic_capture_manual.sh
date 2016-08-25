@@ -1,11 +1,12 @@
 #!/bin/bash
 
+path=$1
 counter=1
 test_name="test.pcap"
 output_file=${counter}.${test_name}
 #once start the script, start tcpdump
 echo "start"
-tcpdump -i any -s 0 -w $output_file & 
+tcpdump -i any -s 0 -w $path/$output_file & 
 counter=$((counter+1))
 
 
@@ -20,7 +21,7 @@ do
         echo "log #$counter done"
         echo "close and start"
         killall tcpdump
-        tcpdump -i any -s 0 -w $output_file & 
+        tcpdump -i any -s 0 -w $path/$output_file & 
         counter=$((counter+1))
         output_file=${counter}.${test_name}
     fi
