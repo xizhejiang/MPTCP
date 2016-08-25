@@ -1,9 +1,9 @@
 #!/bin/bash 
 
-DEV=wlan0
+DEV=wlan1
 DELAY=200ms
 
-LOSS=10%
+LOSS=4%
 
 
 if [ "$1" = "loss" ]

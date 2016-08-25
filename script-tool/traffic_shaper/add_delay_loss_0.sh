@@ -3,7 +3,7 @@
 DEV=wlan0
 DELAY=200ms
 
-LOSS=10%
+LOSS=4%
 
 
 if [ "$1" = "loss" ]
