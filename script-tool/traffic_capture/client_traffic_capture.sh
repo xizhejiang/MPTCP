@@ -35,7 +35,7 @@ do
     if [ $command -lt 2 ] && [ $trigger -eq 1 ]; then
         echo "close"
         #kill previous tcpdump process
-	#sleep 1
+        #sleep 1
         killall tcpdump
         #start a new tcpdump
         tcpdump -i any -s 0 -w $output_file & 
