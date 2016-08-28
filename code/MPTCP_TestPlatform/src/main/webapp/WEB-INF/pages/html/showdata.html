@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Title of the document</title>
+</head>
+<link rel="stylesheet" type="text/css" href="static/css/test_page.css">
+<link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Dynatable/0.3.1/jquery.dynatable.min.css">
+<script src="http://cdn.bootcss.com/jquery/1.7.2/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.0.0.js" integrity="sha256-jrPLZ+8vDxt2FnE1zvZXCkCcebI/C8Dt5xyaQBjxQIo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Dynatable/0.3.1/jquery.dynatable.js"></script>
+<!--<script src="https://code.jquery.com/jquery-1.7.2.js" integrity="sha256-FxfqH96M63WENBok78hchTCDxmChGFlo+/lFIPcZPeI=" crossorigin="anonymous"></script>-->
+<body>
+<style>
+    .col-center-block {
+        float: none;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+<div class="col-center-block">
+    <center>
+    <table class="table table-striped" id="remote">
+        <thead>
+        <th class="bg-primary">loadTime</th>
+        <th class="bg-success">domain</th>
+        <th class="bg-warning">protocol</th>
+        <th class="bg-danger">user</th>
+        <th class="bg-info">timestamp</th>
+        <th class="bg-primary">totalTimes</th>
+        <th class="bg-success">counter</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table></center>
+</div>
+   <script>
+
+//       $('#remote').dynatable({
+//           features: {
+//               paginate: false,
+//               recordCount: false
+//           },
+//           dataset: {
+//               ajax: true,
+//               ajaxOnLoad: true,
+//               ajaxUrl: '/MPTCP/showData',
+//               records: []
+//           },
+//           params: {
+//               records: '_root'
+//           }
+//       });
+//$('#remote').dynatable({
+//    dataset: {
+//        ajax: true,
+//        ajaxUrl: '/MPTCP/showData',
+//        ajaxOnLoad: true,
+//        records: []
+//    }
+//});
+
+$.ajax({
+    url: '/MPTCP/showData',
+    success: function(data){
+        $('#remote').dynatable({
+            dataset: {
+                records: data
+            }
+        });
+    }
+});
+   </script>
+
+
+</body>
+
+</html>

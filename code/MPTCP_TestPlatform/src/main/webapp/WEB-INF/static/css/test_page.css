@@ -1,0 +1,47 @@
+#iframe_test_page{
+
+    width:90%;
+    height:700px;
+
+
+}
+
+#test_url.placeholder {
+    text-align: center;
+}
+
+#test_url{
+    margin:0 auto;
+    display:block;
+    font-size: 100%;
+}
+
+#get_page{
+    width:300px;
+    height: 30px;
+    margin:0 auto;
+    display:block;
+}
+
+#page_load_time{
+    width: 25%;
+    font-size: 120%;
+    margin:0 auto;
+    display:block;
+
+}
+#stop{
+    margin:0 auto;
+    display:block;
+}
+
+#lockdiv{
+    margin:0 auto;
+    display:block;
+}
+
+#lockdiv #lock{
+    margin:0 auto;
+    display:block;
+}
+

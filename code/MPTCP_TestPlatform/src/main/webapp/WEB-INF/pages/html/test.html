@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>MPTCP</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+</head>
+
+<link rel="stylesheet" type="text/css" href="/MPTCP/static/css/test_page.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<script   src="https://code.jquery.com/jquery-3.1.0.js"   integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="   crossorigin="anonymous"></script>
+<!--<script src="https://fb.me/react-15.2.1.min.js"></script>-->
+<!--<script src="https://fb.me/react-dom-15.2.1.min.js"></script>-->
+<body>
+        <nav class="navbar navbar-light bg-faded" style="background-color: black; font-weight: bold;color:white;">
+                <a class="navbar-brand" href="#">MPTCP Test Platform</a>
+                <ul class="nav navbar-nav" >
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                         <a class="nav-link" href="/MPTCP/testResult">Show_Data</a>
+                    </li>
+                </ul>
+
+        </nav>
+
+    <br>
+        <!--<div class="row">-->
+            <!--<div class="col-md-6">-->
+                <!--TCP-URL:  <input type="url" id="tcp_url"  placeholder="put the URL here" value="http://139.59.189.180/Package-HTML/HTML/index-shop.html">-->
+            <!--</div>-->
+            <!--<div class="col-md-6">-->
+                <!--MPTCP-URL:  <input type="url" id="mptcp_url2"  placeholder="put the URL here" value="http://178.62.42.127/Package-HTML/HTML/index-shop.html">-->
+            <!--</div>-->
+            <!--<div class="col-md-6">col-md-6</div>-->
+        <!--</div>-->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="input-group">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button">TCP</button>
+          </span>
+                    <input type="url" id ="tcp_url" class="form-control" value="http://139.59.189.180/Package-HTML/HTML/index-shop.html" placeholder="TCP URL">
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+            <div class="col-lg-6">
+
+                <div class="input-group">
+                    <input type="url" id="mptcp_url" value="http://178.62.42.127/Package-HTML/HTML/index-shop.html" class="form-control" placeholder="MPTCP URL">
+                     <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button">MPTCP</button>
+                     </span>
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+        </div><!-- /.row -->
+
+        <!--current testing url-->
+        <!--<div class="input-group">-->
+              <!--<span class="input-group-btn">-->
+                    <!--<button class="btn btn-default" type="button">CURRENT URL</button>-->
+              <!--</span>-->
+                    <!--<input type="text" id="test_url"  class="form-control" placeholder="CURRENT URL" value="http://139.59.189.180/Package-HTML/HTML/index-shop.html">-->
+            <!--</div>-->
+        <!--<br>-->
+
+
+        <br>
+        <div class="row">
+
+            <div class="col-lg-4">
+                <div class="input-group">
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+
+
+            <div class="col-lg-4">
+                <div class="input-group">
+              <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button">current url</button>
+              </span>
+                    <input type="url" id="test_url"  class="form-control" placeholder="current url" value="http://139.59.189.180/Package-HTML/HTML/index-shop.html">
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+
+            <div class="col-lg-4">
+                <div class="input-group">
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+        </div><!-- /.row -->
+        <br>
+
+
+
+        <center><div id="user-protocol">
+                    Username:&nbsp <input id="user" placeholder="user name">&nbsp
+                    MPTCP/TCP:&nbsp <input id="protocol" placeholder="protocol" value="TCP">&nbsp
+                    experiment times:&nbsp <input type="number" id="time" placeholder="time" value="50">
+
+                </div>
+        </center><br>
+        <div id="lockdiv" class="checkbox">
+            <center><label><input id ="lock" type="checkbox" value="" checked>Lock to Alex's Server(Solved Cache Problem)</label></center>
+        </div>
+        <br> <center><span class="label label-danger" id="page_load_time">Page load time</span></center>
+        <br>
+        <button onclick="start()"  class="btn btn-primary" id="get_page" >get the damn page!</button><br>
+        <br>
+    <script>
+
+        var url1 = $('#tcp_url').val();
+        var url2 = $('#mptcp_url').val();
+        var switch_code = 0;
+        var protocol = "TCP";
+        var start_exp = 0;
+        var resource = "";
+        function initial() {
+             url1 = $('#tcp_url').val();
+             url2 = $('#mptcp_url').val();
+             switch_code = 0;
+        }
+        function getResourceName(url) {
+            var arrays = url.split("/");
+            return arrays[arrays.length-1];
+
+        }
+        function autoSwitch() {
+            if(switch_code%2 === 0){
+                if($('#lock').is(':checked')){
+                    document.getElementById("test_url").value = "http://139.59.189.180/Package-HTML/HTML/"+switch_code+"/HTML/"+getResourceName($('#tcp_url').val());
+                    document.getElementById("tcp_url").value = document.getElementById("test_url").value;
+                }else{
+                    document.getElementById("test_url").value = $('#tcp_url').val();
+                    // alert($('#tcp_url').val());
+                }
+                protocol="TCP";
+                document.getElementById("protocol").value = "TCP";
+
+            }else{
+                if($('#lock').is(':checked')){
+                    document.getElementById("test_url").value = "http://178.62.42.127/Package-HTML/HTML/"+switch_code+"/HTML/"+getResourceName($('#mptcp_url').val());
+                    document.getElementById("mptcp_url").value = document.getElementById("test_url").value;
+
+                }else{
+                    document.getElementById("test_url").value = $('#mptcp_url').val();
+                }
+                protocol="MPTCP";
+                document.getElementById("protocol").value = "MPTCP";
+            }
+            //switch_code++;
+            console.log("switchcode"+switch_code);
+        }
+        function getURL() {
+            document.getElementById('iframe_test_page').src = $("#test_url").val();
+        }
+        function change_url() {
+            var url = document.getElementById("test_url").value;
+            document.getElementById('iframe_test_page').src = url;
+            //document.getElementById('iframe_test_page').src=document.getElementById('iframe_test_page').src;
+//            document.getElementById('iframe_test_page').onload = function(){
+//                setTimeout(function(){
+//                    var t = performance.timing;
+//                    var ptime = t.loadEventEnd - t.responseEnd;
+//                    console.log(ptime);
+//                    document.getElementById('page_load_time').innerHTML = "page load time: "+ptime +" ms";
+//
+//                }, 0);
+            //get_ten_pagetime();
+            //document.getElementById('iframe_test_page').contentWindow.location.reload();
+            // window.location.reload();
+            //get_ten_pagetime();
+        }
+
+        function sendData(ptime) {
+            //console.log(ptime);
+            var pageLoadTime = ptime;
+            var timestamp = new Date();
+            var domain =  $("#test_url").val();
+            var user = $("#user").val();
+            var protocol = $("#protocol").val();
+            // alert(domain);
+            var data = {loadTime:pageLoadTime,timestamp:timestamp,domain:domain,user:user,protocol:protocol,totalTimes:$('#time').val(),counter:showCounter};
+            $.ajax({
+                type: 'POST',
+                url: "/MPTCP/postData",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                ifModified: false,
+                success:function() {
+                    console.log("success");
+                },
+                error:function () {
+                    console.log("failed");
+                }
+            });
+        }
+    </script>
+    <script>
+        // function get_ten_pagetime() {
+        //  for(i=0;i<10;i++){
+        // console.log(i);
+        // document.getElementById('iframe_test_page').contentWindow.location.reload();
+        //alert('here');
+        //        function interval(func, wait){
+        //            var interv = function(){
+        //                func.call(null);
+        //                setTimeout(interv, wait);
+        //            };
+        //            setTimeout(interv, wait);
+        //        }
+        //
+        //        interval(function(){
+        //            cacheSafeReload($("#test_url").val());
+        //        },6000);
+        //            setTimeout(function repeatMe() {
+        //                /* Some long block of code... */
+        //                cacheSafeReload($("#test_url").val());
+        //                //alert('haha');
+        //                setTimeout(repeatMe, 5000);
+        //            }, 5000);
+        // window.setInterval(cacheSafeReload($("#test_url").val()),6000);
+        var beforetime = new Date().getTime();
+        var showCounter = 0;
+        var lock = 0;
+        function start() {
+//            autoSwitch();
+//            change_url();
+            console.log(getResourceName($('#test_url').val()));
+            start_exp++;
+            if(start_exp<2){
+                initial();
+                var counter = 0;
+
+                beforetime = new Date().getTime();
+                var i = setInterval(function(){
+                    // do your  thing
+                    if(!lock){
+                        autoSwitch();
+                        change_url();
+                        cacheSafeReload($("#test_url").val());
+                        counter++;
+                        showCounter = counter;
+                        //alert($("#time").val());
+                        if(counter >= $("#time").val()) {
+                            clearInterval(i);
+                            lock = 1;
+                        }
+                    }
+
+                }, 10000);
+            }
+
+        }
+
+
+
+        function cacheSafeReload(urlBase) {
+            //alert('haha');
+
+                //alert('passload');
+                var cacheParamValue = (new Date()).getTime();
+                var url = urlBase + "?cache=" + cacheParamValue;
+                var e = $('#iframe_test_page');
+                console.log("shuaxin");
+                document.getElementById('iframe_test_page').src = url;
+                beforetime = new Date().getTime();
+
+
+        }
+
+        function calculateIframe() {
+            // document.getElementById('iframe_test_page').onload = function(){
+
+                var aftertime = new Date().getTime();
+                var ptime = aftertime-beforetime;
+                //document.getElementById('counter').innerHTML = count;
+                //alert('load');
+                var count = sendData(ptime);
+                document.getElementById('page_load_time').innerHTML = "page load time: "+ptime +" ms"+" @ "+showCounter;
+                switch_code++;
+
+            //   }
+        }
+        // var times = 10;
+        // var iframe = document.getElementById('iframe');
+        // var i;
+        // for(i = 0; i < 10; i++){
+        //   setTimeout("auto_reload_page(iframe)",30000);
+        // }
+        // function auto_reload_page(f){
+        //    document.getElementById('iframe').contentWindow.location.reload(true);
+        // }
+
+    </script>
+  <center>
+    <iframe id="iframe_test_page" src="http://139.59.189.180/Package-HTML/HTML/index-shop.html" onload="calculateIframe()">
+
+    </iframe>
+  </center>
+
+
+</body>
+
+</html>
